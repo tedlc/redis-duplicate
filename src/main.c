@@ -56,22 +56,9 @@ int main() {
 	int client_fd;
     client_fd = accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
 	printf("Client connected\n");
-    
-    char buffer[8];
-    int err = read(client_fd, buffer, 7);
-     
-    if (err < 0) {
-        printf("Error reading from Redis server.");
-        close(server_fd);
-    }
-    
-    if (strcmp(buffer, "+PING\r\n") == 0) {
-        write(client_fd, "+PONG\r\n", 7);
-        close(client_fd); 
-    } else {
-        printf("Error, PING format is wrong\n");
-        close(client_fd);
-    }
+    char buffer[255];
+
+    write(client_fd, "+PONG\r\n", 7);
 	close(server_fd);
 
 	return 0;
