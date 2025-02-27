@@ -17,7 +17,7 @@ int main() {
 
 	// Uncomment this block to pass the first stage
 	//
-	int server_fd, client_addr_len;
+	socklen_t server_fd, client_addr_len;
 	struct sockaddr_in client_addr;
 	
 	server_fd = socket(AF_INET, SOCK_STREAM, 0);
@@ -53,9 +53,25 @@ int main() {
 	printf("Waiting for a client to connect...\n");
 	client_addr_len = sizeof(client_addr);
 
-	accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
+	int client_fd;
+    client_fd = accept(server_fd, (struct sockaddr *) &client_addr, &client_addr_len);
 	printf("Client connected\n");
-
+    
+    char buffer[8];
+    int err = read(client_fd, buffer, 7);
+     
+    if (err < 0) {
+        printf("Error reading from Redis server.");
+        close(server_fd);
+    }
+    
+    if (strcmp(buffer, "+PING\r\n") == 0) {
+        write(client_fd, "+PONG\r\n", 7);
+        close(client_fd); 
+    } else {
+        printf("Error, PING format is wrong\n");
+        close(client_fd);
+    }
 	close(server_fd);
 
 	return 0;
