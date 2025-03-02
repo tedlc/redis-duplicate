@@ -52,4 +52,12 @@ Mkfile.old
 dkms.conf
 
 build
+
+# vcpkg files
 vcpkg_installed
+
+# drawings
+*.excalidraw
+
+# MacOS DB
+.DS_Store
